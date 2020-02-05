@@ -30,10 +30,12 @@ CONFIG += c++11
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+    zoomlabel.cpp
 
 HEADERS += \
-        mainwindow.h
+        mainwindow.h \
+    zoomlabel.h
 
 FORMS += \
         mainwindow.ui
@@ -45,17 +47,20 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 
 #openfinger-preprocessor
-unix:!macx: LIBS += -L$$PWD/../build-Preprocessing-Desktop-Debug/ -lPreprocessing
+#unix:!macx: LIBS += -L$$PWD/../build-Preprocessing-Desktop-Debug/ -lPreprocessing
+unix:!macx: LIBS += -L$$PWD/../build-Preprocessing-Desktop-Release/ -lPreprocessing
 INCLUDEPATH += $$PWD/../openfinger-preprocessor
 DEPENDPATH += $$PWD/../openfinger-preprocessor
 
 #openfinger-extractor
-unix:!macx: LIBS += -L$$PWD/../build-Extraction-Desktop-Debug/ -lExtraction
+#unix:!macx: LIBS += -L$$PWD/../build-Extraction-Desktop-Debug/ -lExtraction
+unix:!macx: LIBS += -L$$PWD/../build-Extraction-Desktop-Release/ -lExtraction
 INCLUDEPATH += $$PWD/../openfinger-extractor
 DEPENDPATH += $$PWD/../openfinger-extractor
 
 #openfinger-matcher
-unix:!macx: LIBS += -L$$PWD/../build-Matcher-Desktop-Debug/ -lMatcher
+#unix:!macx: LIBS += -L$$PWD/../build-Matcher-Desktop-Debug/ -lMatcher
+unix:!macx: LIBS += -L$$PWD/../build-Matcher-Desktop-Release/ -lMatcher
 INCLUDEPATH += $$PWD/../openfinger-matcher
 DEPENDPATH += $$PWD/../openfinger-matcher
 

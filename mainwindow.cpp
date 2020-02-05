@@ -47,15 +47,26 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(&m, SIGNAL(verificationDoneSignal(bool)),this,SLOT(verificationDoneSlot(bool)));
     QObject::connect(&m, SIGNAL(matcherErrorSignal(int)),this,SLOT(matcherErrorSlot(int)));
 
+    // image zooming
+    QObject::connect(ui->img1, SIGNAL(zoomImgSignal(double,QString)),this,SLOT(zoomImgSlot(double,QString)));
+    QObject::connect(ui->img2, SIGNAL(zoomImgSignal(double,QString)),this,SLOT(zoomImgSlot(double,QString)));
+
     // image loading
     path1 = PRO_PWD+QString("/db/")+"8_4.tif";
     path2 = PRO_PWD+QString("/db/")+"15_4.tif";
     this->img1 = cv::imread(path1.toStdString(),cv::IMREAD_GRAYSCALE);
     this->img2 = cv::imread(path2.toStdString(),cv::IMREAD_GRAYSCALE);
 
-    ui->img1->setPixmap(path1);
-    ui->img2->setPixmap(path2);
+    ui->img1->setPixmap(QPixmap(path1).scaledToWidth(IMG_WIDTH));
+    ui->img2->setPixmap(QPixmap(path2).scaledToWidth(IMG_WIDTH));
 
+    // load image lists
+    QDir dir(PRO_PWD+QString("/db"));
+    QFileInfoList ilist = dir.entryInfoList(QStringList() << "*.tif" << "*.png" << "*.jpg" << "*.bmp");
+    for(QFileInfo& i : ilist){
+        ui->list1->addItem(i.fileName());
+        ui->list2->addItem(i.fileName());
+    }
 }
 
 MainWindow::~MainWindow()
@@ -65,15 +76,15 @@ MainWindow::~MainWindow()
 
 void MainWindow::preprocessingDoneSlot(PREPROCESSING_RESULTS pr)
 {
-    counter++;
-    if(counter==1){
-        pr1 = pr;
-    }
-    else if(counter==2){
-        pr2 = pr;
-    }
-    e.loadInput(pr);
-    e.start();
+//    counter++;
+//    if(counter==1){
+//        pr1 = pr;
+//    }
+//    else if(counter==2){
+//        pr2 = pr;
+//    }
+//    e.loadInput(pr);
+//    e.start();
 }
 
 void MainWindow::preprocessingErrorSlot(int)
@@ -83,42 +94,41 @@ void MainWindow::preprocessingErrorSlot(int)
 
 void MainWindow::extractionDoneSlot(EXTRACTION_RESULTS er)
 {
-    QImage img;
-    if(counter==1){
-       img = Mat2QImage(img1,QImage::Format_Grayscale8);
-    }
-    else{
-       img = Mat2QImage(img2,QImage::Format_Grayscale8);
-    }
+//    QImage img;
+//    if(counter==1){
+//       img = Mat2QImage(img1,QImage::Format_Grayscale8);
+//    }
+//    else{
+//       img = Mat2QImage(img2,QImage::Format_Grayscale8);
+//    }
 
-    img = img.convertToFormat(QImage::Format_RGB888);
-    QPainter pnt(&img);
+//    img = img.convertToFormat(QImage::Format_RGB888);
+//    QPainter pnt(&img);
 
-    pnt.setBrush(Qt::NoBrush);
-    pnt.setPen(QPen(QBrush(QColor(255,0,0)),2));
+//    pnt.setBrush(Qt::NoBrush);
+//    pnt.setPen(QPen(QBrush(QColor(255,0,0)),2));
 
-    for(MINUTIA& m : er.minutiaePredictedFixed){
+//    for(MINUTIA& m : er.minutiaePredictedFixed){
 
-        if(m.type==0){
-            pnt.setPen(QPen(QBrush(QColor(0,255,0)),2));
+//        if(m.type==0){
+//            pnt.setPen(QPen(QBrush(QColor(0,255,0)),2));
 
-        }
-        else{
-            pnt.setPen(QPen(QBrush(QColor(255,0,0)),2));
+//        }
+//        else{
+//            pnt.setPen(QPen(QBrush(QColor(255,0,0)),2));
 
-        }pnt.drawEllipse(QPoint(m.xy.x(),m.xy.y()),5,5);
-        pnt.drawLine(QPoint(m.xy),QPoint(m.xy.x()+qCos(m.angle)*12,m.xy.y() -qSin(m.angle)*12));
-    }
+//        }pnt.drawEllipse(QPoint(m.xy.x(),m.xy.y()),5,5);
+//        pnt.drawLine(QPoint(m.xy),QPoint(m.xy.x()+qCos(m.angle)*12,m.xy.y() -qSin(m.angle)*12));
+//    }
+//    pnt.end();
 
-    pnt.end();
-
-    img = img.scaled(800,800,Qt::KeepAspectRatio);
-    if(counter==1){
-        ui->img1->setPixmap(QPixmap::fromImage(img));
-    }
-    else{
-        ui->img2->setPixmap(QPixmap::fromImage(img));
-    }
+//    img = img.scaledToWidth(IMG_WIDTH);
+//    if(counter==1){
+//        ui->img1->setPixmap(QPixmap::fromImage(img));
+//    }
+//    else{
+//        ui->img2->setPixmap(QPixmap::fromImage(img));
+//    }
 
 }
 
@@ -129,15 +139,15 @@ void MainWindow::extractionDoneSlot(QVector<MINUTIA>)
 
 void MainWindow::extractionDoneSlot(unsigned char * iso)
 {
-    if(counter==1){
-        template1 = iso;
-    }
-    else{
-        template2 = iso;
-        QVector<unsigned char*> templates2{template2};
+//    if(counter==1){
+//        template1 = iso;
+//    }
+//    else{
+//        template2 = iso;
+//        QVector<unsigned char*> templates2{template2};
 
-        m.verify(template1,templates2);
-    }
+//        m.verify(template1,templates2);
+//    }
 }
 
 void MainWindow::extractionErrorSlot(int)
@@ -149,6 +159,13 @@ void MainWindow::verificationDoneSlot(bool vr)
 {
     qDebug() << "RESULT: " << vr;
     qDebug() << "Score: " << m.getSupremaMatcher().scores.last();
+    if(m.getSupremaMatcher().scores.last() > 0.01){
+        ui->score->setText("TRUE");
+    }
+    else{
+        ui->score->setText("FALSE");
+    }
+
 }
 
 void MainWindow::matcherErrorSlot(int)
@@ -156,11 +173,59 @@ void MainWindow::matcherErrorSlot(int)
     qDebug() << "ERROR";
 }
 
+void MainWindow::zoomImgSlot(double scaleFactor, QString imgName)
+{
+    if(imgName == "img1"){
+        ui->img1->setPixmap(QPixmap(path1).scaledToWidth(ui->img1->pixmap()->width()*scaleFactor));
+    }
+    else if (imgName == "img2"){
+        ui->img2->setPixmap(QPixmap(path2).scaledToWidth(ui->img2->pixmap()->width()*scaleFactor));
+    }
+}
+
 void MainWindow::on_pushButton_clicked()
 {
     counter = 0;
-    p.loadInput(img1);
+    p.loadInput(path1);
     p.start();
-    p.loadInput(img2);
+    p.loadInput(path2);
     p.start();
+}
+
+void MainWindow::on_list2_itemClicked(QListWidgetItem *item)
+{
+    path2 = PRO_PWD+QString("/db/")+item->text();
+    this->img2 = cv::imread(path2.toStdString(),cv::IMREAD_GRAYSCALE);
+    ui->img2->setPixmap(QPixmap(path2).scaledToWidth(IMG_WIDTH));
+}
+
+void MainWindow::on_list1_itemClicked(QListWidgetItem *item)
+{
+    path1 = PRO_PWD+QString("/db/")+item->text();
+    this->img1 = cv::imread(path1.toStdString(),cv::IMREAD_GRAYSCALE);
+    ui->img1->setPixmap(QPixmap(path1).scaledToWidth(IMG_WIDTH));
+
+}
+
+void MainWindow::on_pushButton_2_clicked()
+{
+    QMap<QString, unsigned char *> fmap;
+    QDir dir(PRO_PWD+QString("/db"));
+    QFileInfoList ilist = dir.entryInfoList(QStringList() << "*.tif" << "*.png" << "*.jpg" << "*.bmp");
+    int ii=0;
+    for(QFileInfo& i : ilist){
+        p.loadInput(i.absoluteFilePath());
+        p.start();
+        e.loadInput(p.getBasicResults());
+        e.start();
+        fmap.insert(i.fileName(), e.getResults().minutiaeISO);
+        qDebug() << ii++;
+    }
+    m.setDBTestParams(100,8);
+    m.testDatabase(fmap);
+    for(double i: m.getDbtestResult().fmrY){
+         std::cout << i;
+    }
+
+
 }

@@ -2,9 +2,13 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QListWidgetItem>
 #include "preprocessing.h"
 #include "extraction.h"
 #include "matcher.h"
+#include "zoomlabel.h"
+
+#define IMG_WIDTH 600
 
 namespace Ui {
 class MainWindow;
@@ -41,7 +45,12 @@ private slots:
     void verificationDoneSlot(bool);
     void matcherErrorSlot(int);
 
+    void zoomImgSlot(double,QString);
+
     void on_pushButton_clicked();
+    void on_list2_itemClicked(QListWidgetItem *item);
+    void on_list1_itemClicked(QListWidgetItem *item);
+    void on_pushButton_2_clicked();
 };
 
 #endif // MAINWINDOW_H
