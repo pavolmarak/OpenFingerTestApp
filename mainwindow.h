@@ -7,6 +7,7 @@
 #include "extraction.h"
 #include "matcher.h"
 #include "zoomlabel.h"
+#include "qcustomplot.h"
 
 #define IMG_WIDTH 600
 

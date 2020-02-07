@@ -75,6 +75,11 @@ debian {
     unix:!macx: LIBS += -L/usr/lib/x86_64-linux-gnu/ -lboost_system
     INCLUDEPATH += /usr/include
     DEPENDPATH += /usr/include
+
+    #QCustomPlot - Debian (built from source)
+    unix:!macx: LIBS += -L/usr/local/lib/ -lqcustomplotd
+    INCLUDEPATH += /usr/local/include
+    DEPENDPATH += /usr/local/include
 }
 
 manjaro {
@@ -103,6 +108,11 @@ manjaro {
     unix:!macx: LIBS += -L/usr/lib/ -lboost_system
     INCLUDEPATH += /usr/include
     DEPENDPATH += /usr/include
+
+    #QCustomPlot - Manjaro (built from source)
+    unix:!macx: LIBS += -L/usr/local/lib/ -lqcustomplotd
+    INCLUDEPATH += /usr/local/include
+    DEPENDPATH += /usr/local/include
 }
 
 #openfinger-preprocessor
@@ -122,5 +132,3 @@ unix:!macx: LIBS += -L$$PWD/../build-Matcher-Desktop-Debug/ -lMatcher
 #unix:!macx: LIBS += -L$$PWD/../build-Matcher-Desktop-Release/ -lMatcher
 INCLUDEPATH += $$PWD/../openfinger-matcher
 DEPENDPATH += $$PWD/../openfinger-matcher
-
-
