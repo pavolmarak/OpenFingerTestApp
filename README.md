@@ -1,8 +1,7 @@
 # OpenFingerTestApp
 Software for testing OpenFinger library suite.
 
-## Process virtual address space
-![Program memory layout](assets/program-memory.png)
+# Useful information
 
 ## Static and dynamic libraries
 
@@ -18,3 +17,6 @@ Static linking is the process of copying all library modules used in the program
 In dynamic linking the names of the external libraries (shared libraries) are placed in the final executable file while the actual linking takes place at run time when both executable file and libraries are placed in the memory. Dynamic linking lets several programs use a single copy of an executable module. 
 
 ![Static vs. dynamic linking](assets/example-of-dynamic-linking.jpg)
+
+## Process virtual address space
+![Program memory layout](assets/program-memory.png)
