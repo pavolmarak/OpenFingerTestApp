@@ -67,12 +67,13 @@ manjaro {
     INCLUDEPATH += /opt/cuda/include
 
     #Suprema SDK - Manjaro (installed manually)
+    INCLUDEPATH += /usr/local/include
     INCLUDEPATH += /usr/local/include/suprema
 
-    #ArrayFire - Manjaro (built from source)
-    unix:!macx: LIBS += -L/usr/local/lib/ -lafcuda
-    INCLUDEPATH += /usr/local/include
-    DEPENDPATH += /usr/local/include
+    #ArrayFire - Manjaro (as a package)
+    unix:!macx: LIBS += -L/usr/lib/ -lafcuda
+    INCLUDEPATH += /usr/include
+    DEPENDPATH += /usr/include
 
     #OpenCV - Manjaro (as a package)
     unix:!macx: LIBS += -L/usr/lib/ -lopencv_core
